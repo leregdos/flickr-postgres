@@ -22,3 +22,7 @@ To set up the local database, from the root folder, do the following:
 4. Create new database: `CREATE DATABASE flickr_postgres;`
 5. Create the tables: `\i define_schema.sql`
 6. Exit the interactive mode: `\q`
+
+## Acknolwedgements
+
+- The html templates were taken from this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login)

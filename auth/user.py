@@ -20,4 +20,4 @@ def register():
     if request.method == 'POST':
         # Process registration
         return redirect(url_for('user.profile'))
-    return render_template('register.html')
+    return render_template('signup.html')
