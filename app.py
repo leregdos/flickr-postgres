@@ -1,9 +1,14 @@
 from flask import Flask
 from index import index
 from auth import user
+from photos import photos
+from flask_session import Session
 import psycopg2
 
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "cachelib"
+Session(app)
 
 # Setup Database connection
 DB_HOST = "localhost"  # Database host
@@ -16,6 +21,8 @@ conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_
 # Register the Blueprints
 app.register_blueprint(index.index_blueprint, url_prefix='/')
 app.register_blueprint(user.user_blueprint, url_prefix='/user')
+app.register_blueprint(photos.photos_blueprint, url_prefix='/photos')
+
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)
