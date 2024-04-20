@@ -16,29 +16,69 @@
       <div class="hero-head">
         <nav class="navbar">
           <div class="container">
+            {% if session.get('userid') %}
             <div id="navbarMenuHeroA" class="navbar-menu">
               <div class="navbar-end">
                 <a href="{{ url_for('index.index') }}" class="navbar-item">
-                  Home
+                  Photos
+                </a>
+                <a href="{{ url_for('index.index') }}" class="navbar-item">
+                  Tags
+                </a>
+                <a href="{{ url_for('user.login') }}" class="navbar-item">
+                  Friends
+                </a>
+                <a href="{{ url_for('user.register') }}" class="navbar-item">
+                  Recommendations
                 </a>
                 <a href="{{ url_for('index.index') }}" class="navbar-item">
                   Profile
+                </a>
+                <a href="{{ url_for('user.logout') }}" class="navbar-item">
+                  Logout
+                </a>
+              </div>
+            </div>
+            {% else %}
+            <div id="navbarMenuHeroA" class="navbar-menu">
+              <div class="navbar-end">
+                <a href="{{ url_for('index.index') }}" class="navbar-item">
+                  Photos
+                </a>
+                <a href="{{ url_for('index.index') }}" class="navbar-item">
+                  Tags
                 </a>
                 <a href="{{ url_for('user.login') }}" class="navbar-item">
                   Login
                 </a>
                 <a href="{{ url_for('user.register') }}" class="navbar-item">
-                  Sign Up
-                </a>
-                <a href="{{ url_for('index.index') }}" class="navbar-item">
-                  Logout
+                  Register
                 </a>
               </div>
             </div>
+            {% endif %}
           </div>
         </nav>
       </div>
 
+      <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="columns is-centered">
+          <div class="column is-half">
+            {% for category, message in messages %}
+            <div class="notification {{ category }}">
+              <button
+                class="delete"
+                onclick="this.parentElement.style.display='none';"
+              ></button>
+              {{ message }}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %} {% endwith %}
+      </div>
       <div class="hero-body">
         <div class="container has-text-centered">
           {% block content %} {% endblock %}

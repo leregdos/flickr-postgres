@@ -25,4 +25,4 @@ app.register_blueprint(photos.photos_blueprint, url_prefix='/photos')
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=True)
+    app.run(debug=True, use_reloader=True, port=8000)
