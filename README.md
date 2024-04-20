@@ -7,8 +7,11 @@ This is a Flask + PostgreSQL implementation of a picture sharing social media pl
 ### Requirements
 
 1. Python
+2. [Virtualenv](https://virtualenv.pypa.io/en/latest/)
 
 ### Dependencies
+
+To set up the dependencies, from the root folder, do the following (We assume that you have already installed virtualenv and activated your virtual environment):
 
 1. Run `pip install -r requirements.txt` to install all dependencies in the virtual environment.
 

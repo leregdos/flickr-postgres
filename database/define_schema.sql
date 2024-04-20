@@ -34,8 +34,8 @@ CREATE TABLE Albums(
 CREATE TABLE Photos(
 	photo_id SERIAL,
 	caption VARCHAR(255),
-	-- # as a path to the photo
-	data VARCHAR(255) NOT NULL,
+	-- # base 64
+	data BYTEA NOT NULL,
 	album_id INTEGER,
 	-- delete photos in an album if the album is deleted
 	FOREIGN KEY (album_id) REFERENCES Albums(album_id) ON DELETE CASCADE,
