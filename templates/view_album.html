@@ -19,6 +19,7 @@
     </table>
 </div>
 <div class = block>
+    {% if user_id==album.owner_id %}
     <a class='button' href="{{ url_for('photos.upload_photo', album_id = album.album_id) }}" class="label">
         Add photo to this album
     </a>
@@ -27,6 +28,7 @@
             <button class="button is-danger">Delete this album</button>
         </div>
     </form>
+    {% endif %}
 </div>
 <div>
     <div class = 'box'>

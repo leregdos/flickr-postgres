@@ -9,6 +9,7 @@ user_blueprint = Blueprint('user', __name__)
 def index():
     return "User index"
 
+# profile shows the users' info and the albums they have
 @user_blueprint.route('/profile')
 def profile():
     user_id = session['userid']
@@ -41,7 +42,6 @@ def profile():
             'name': name
         }
         albums.append(album)
-
 
     return render_template('profile.html', user_info = user_info, albums = albums)
 

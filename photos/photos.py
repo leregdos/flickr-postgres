@@ -7,7 +7,8 @@ import base64
 # Create a Blueprint for the user-related operations
 photos_blueprint = Blueprint('photos', __name__)
 
-
+# url '/photos'
+# this shows a list of albums and photos of all users
 @photos_blueprint.route('/')
 def index():
     from app import conn
@@ -49,8 +50,10 @@ def index():
 
     return render_template('photos.html', albums = album_list)
 
+# view a single album
 @photos_blueprint.route('/view-album/<int:album_id>', methods=['GET', 'POST'])
 def view_album(album_id):
+    # post request delete the album
     if request.method == 'POST':
         from app import conn
         cur = conn.cursor()
@@ -72,7 +75,7 @@ def view_album(album_id):
 
     from app import conn
     cur = conn.cursor()
-    cur.execute("SELECT name, owner, date_of_creation FROM Albums A WHERE album_id = album_id;")
+    cur.execute("SELECT name, owner, date_of_creation FROM Albums A WHERE album_id = {0};".format(album_id))
     (name, owner, date_of_creation) = cur.fetchone()
     cur.close()
 
@@ -83,12 +86,12 @@ def view_album(album_id):
     }
 
     cur = conn.cursor()
-    cur.execute("SELECT first_name, last_name FROM Users U WHERE U.user_id = {id};".format(id = owner))
-    (first_name, last_name) = cur.fetchone()
+    cur.execute("SELECT user_id, first_name, last_name FROM Users U WHERE U.user_id = {id};".format(id = owner))
+    (user_id, first_name, last_name) = cur.fetchone()
     cur.close()
 
     album['owner'] = "{first_name} {last_name}".format(first_name = first_name, last_name = last_name)
-    
+    album['owner_id'] = user_id
 
     photo_list = []
     cur = conn.cursor()
@@ -106,12 +109,18 @@ def view_album(album_id):
 
     album['photos'] = photo_list
 
-    return render_template('view_album.html', album = album)
+    # This is to check if the user has the privilege to delete photo
+    user_id = -1
+    if session.get('userid'):
+        user_id = session['userid']
+
+    return render_template('view_album.html', user_id = user_id, album = album)
 
 
 # view a single photo  
 @photos_blueprint.route('/view-photo/<int:photo_id>', methods=['GET', 'POST'])
 def view_photo(photo_id):
+    # post request delete the photo
     if request.method == 'POST':
         from app import conn
         cur = conn.cursor()
@@ -133,13 +142,28 @@ def view_photo(photo_id):
 
     from app import conn
     cur = conn.cursor()
-    cur.execute("SELECT caption, data FROM Photos P WHERE P.photo_id={0};".format(photo_id))
-    (caption, data) = cur.fetchone()
+    cur.execute("SELECT caption, data, album_id FROM Photos P WHERE P.photo_id={0};".format(photo_id))
+    (caption, data, album_id) = cur.fetchone()
     cur.close()
 
-    data = base64.b64encode(data).decode()
-    return render_template('view_photo.html', photo_id = photo_id, photo = data, caption = caption)
+    # get the owner of the photo from the album it belongs to
+    cur = conn.cursor()
+    cur.execute("SELECT owner FROM Albums WHERE album_id = '{0}';".format(album_id))
+    (owner,) = cur.fetchone()
+    cur.close()
+    photo = {
+        'owner': owner,
+        'photo_id': photo_id, 
+        'photo': base64.b64encode(data).decode(), 
+        'caption': caption
+    }
+    
+    # only the owner of the photo has privilege to delete it
+    user_id = -1
+    if session.get('userid'):
+        user_id = session['userid']
 
+    return render_template('view_photo.html',  user_id = user_id, photo = photo)
 
 
 @photos_blueprint.route('/create-album', methods=['GET', 'POST'])
@@ -204,8 +228,6 @@ def upload_photo(album_id):
         flash('You cannot upload photo to album that is not yours.', 'is-danger')
         return render_template('photos.html')
     cur.close()
-    
-
 
     if request.method == 'POST':
 
@@ -219,7 +241,6 @@ def upload_photo(album_id):
         }
         cur = conn.cursor()
 
-        # Filter out None values for optional fields
         columns, values = zip(*((k, v) for k, v in data.items() if v is not None))
         placeholders = ', '.join(['%s'] * len(values))
         sql = f"INSERT INTO Photos ({', '.join(columns)}) VALUES ({placeholders}) RETURNING photo_id;"
@@ -235,9 +256,13 @@ def upload_photo(album_id):
                 cur = conn.cursor()
                 cur.execute("SELECT tag_id FROM Tags where words = '{0}';".format(word))
                 
-                (tag_id) = cur.fetchone()
-                if not tag_id:
+                tag_id = cur.fetchone()
+                
+                # if it doesn't exist, safely add the tag
+                if not tag_id: 
                     # saving tag
+                    cur.close()
+                    cur = conn.cursor()
                     tag = {
                         'words': word
                     }
@@ -246,6 +271,9 @@ def upload_photo(album_id):
                     sql = f"INSERT INTO Tags ({', '.join(columns)}) VALUES ({placeholders}) RETURNING tag_id;"
                     cur.execute(sql, values)
                     tag_id = cur.fetchone()[0]
+                    cur.close()
+                else: # otherwise unpack the query and get the tag_id
+                    (tag_id,) = tag_id 
 
                 # saving tagged relation
                 cur = conn.cursor()
