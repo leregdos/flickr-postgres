@@ -1,0 +1,49 @@
+{% extends "base.html" %} 
+{% block content %}
+<div class = "content">
+    <h1>Album Info</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>{{album.name}}</th>
+        </tr>
+        <tr>
+            <th>Date of Creation</th>
+            <th>{{album.date_of_creation}}</th>
+        </tr>
+        <tr>
+            <th>Owner</th>
+            <th>{{album.owner}}</th>
+        </tr>
+        
+    </table>
+</div>
+<div class = block>
+    <a class='button' href="{{ url_for('photos.upload_photo', album_id = album.album_id) }}" class="label">
+        Add photo to this album
+    </a>
+    <form method="POST" action="{{ url_for('photos.view_album', album_id = album.album_id) }}">
+        <div class="control">
+            <button class="button is-danger">Delete this album</button>
+        </div>
+    </form>
+</div>
+<div>
+    <div class = 'box'>
+        <div>
+        {% for photo in album.photos %}
+            <div class="card-image">
+                <figure class="image">
+                    <img src="data:image/jpg;base64,{{photo.data}}" alt="Photo">
+                </figure>
+            </div>
+            <div class="card-content">
+                <a class='button' href="{{ url_for('photos.view_photo', photo_id = photo.photo_id) }}" class="label">
+                    Go to photo
+                </a>
+            </div>
+        {% endfor %}
+        <div>
+    </div>
+</div>
+{% endblock %}

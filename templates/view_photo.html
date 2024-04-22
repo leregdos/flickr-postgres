@@ -1,0 +1,22 @@
+{% extends "base.html" %} 
+{% block content %}
+    <div class = 'box'>
+        <div>
+        <div class="card-image">
+            <figure class="image">
+                <img src="data:image/jpg;base64,{{photo}}" alt="Photo" width ="500" height="500" >
+            </figure>
+        </div>
+        <div class="card-content">
+            <ul>
+                Caption: {{caption}}
+            </ul>
+            <form method="POST" action="{{ url_for('photos.view_photo', photo_id = photo_id) }}">
+                <div class="control">
+                    <button class="button is-danger">Delete this photo</button>
+                </div>
+            </form>
+        </div>
+        <div>
+    </div>
+{% endblock %}
