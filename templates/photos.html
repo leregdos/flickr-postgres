@@ -1,4 +1,14 @@
-{% extends "base.html" %} {% block content %}
-<h1 class="title">Flickr Implementation</h1>
-<h2 class="subtitle">Welcome.</h2>
+{% extends "base.html" %} 
+{% block content %}
+
+<div class="album-block">
+    <h2 class="album-title">Album {{ album.name }} from {{user.name}}</h2>
+    <ul class="photos-list">
+        {% for photo in photos %}
+            <li class="photo-item">
+                <img src="data:;base64,{{ image }}"/>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}

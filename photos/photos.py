@@ -1,6 +1,8 @@
 from flask import Blueprint, flash, request, render_template, redirect, session, url_for
+from datetime import datetime
 import sys
 from index import index
+import base64
 
 # Create a Blueprint for the user-related operations
 photos_blueprint = Blueprint('photos', __name__)
@@ -22,45 +24,46 @@ CREATE TABLE Photos(
 def index():
     return session["id"]
 
+
 @photos_blueprint.route('/create-album', methods=['GET', 'POST'])
 def create_album():
+    if not ('userid' in session):
+        flash('You need to login first to create album.', 'is-danger')
+        return render_template('login.html')
+
     if request.method == 'POST':
         from app import conn
+
+        date = datetime.now()
+        date.strftime('%Y-%m-%d')
+
         data = {
-            'name': request.form['album_name']
+            'name': request.form['album_name'],
+            'owner':session["userid"],
+            'date_of_creation': date
         }
         cur = conn.cursor()
 
         # Check if album of the same name of this user already exists
-        cur.execute("SELECT * FROM Users U WHERE U.email = '{0}';".format(data['email']))
+        cur.execute("SELECT * FROM Albums A WHERE A.name = '{0}';".format(data['name']))
         if cur.fetchone():
-            flash('This email has already been registered. Please use a different email.', 'is-danger')
-            return render_template('signup.html')
+            flash('You already have an album of the same name. Please use another album name.', 'is-danger')
+            return render_template('create_album.html')
+        
         # Filter out None values for optional fields
         columns, values = zip(*((k, v) for k, v in data.items() if v is not None))
         placeholders = ', '.join(['%s'] * len(values))
-        sql = f"INSERT INTO Users ({', '.join(columns)}) VALUES ({placeholders}) RETURNING user_id;"
+        sql = f"INSERT INTO Albums ({', '.join(columns)}) VALUES ({placeholders});"
         try:
             cur.execute(sql, values)
-            user_id = cur.fetchone()[0]
             conn.commit()
-            flash(f'Thanks for registering, {data["first_name"]}!', 'is-success')
+            flash(f'Album {data["name"]} successfully created!', 'is-success')
             # Set user info as session variables
-            session['userid'] = user_id
-            session['first_name'] = data["first_name"]
-            session['last_name'] = data["last_name"]
-            session['email'] = data["email"]
-            if data['date_of_birth'] is not None:
-                session['date_of_birth'] = data['date_of_birth']
-            if data['gender'] is not None:
-                session['gender'] = data['gender']
-            if data['hometown'] is not None:
-                session['hometown'] = data['hometown']
             return redirect(url_for('index.index'))
         except Exception as e:
             conn.rollback()
             print("Failed to insert record into database:", e, file=sys.stderr)
-            flash('Failed to register. Please try again.', 'is-danger')
+            flash('Failed to create album. Please try again.', 'is-danger')
         finally:
             cur.close()
 
@@ -68,10 +71,56 @@ def create_album():
                                                   
                                                  
 
-@photos_blueprint.route('/upload-photo', methods=['GET', 'POST'])
-def upload_photo():
-    if request.method == 'POST':
-        render_template('upload_photo.html')
+@photos_blueprint.route('/upload-photo/<int:album_id>', methods=['GET', 'POST'])
+def upload_photo(album_id):
+    if not ('userid' in session):
+        flash('You need to login first to upload photo.', 'is-danger')
+        return render_template('login.html')
 
-    return render_template('upload_photo.html')
+    # Check if the album belongs to the user
+    from app import conn
+    cur = conn.cursor()
+    cur.execute("SELECT owner, name FROM Albums A WHERE A.album_id = '{0}';".format(album_id))
+
+    (album_owner, album_name) = cur.fetchone()
+
+    
+    if album_owner != session['userid']:
+        flash('You cannot upload photo to album that is not yours.', 'is-danger')
+        return render_template('photos.html')
+    cur.close()
+    
+
+
+    if request.method == 'POST':
+
+        date = datetime.now()
+        date.strftime('%Y-%m-%d')
+
+        data = {
+            'caption': request.form['caption'],
+            'data': base64.b64encode(request.files['photo'].read()),
+            'album_id': album_id
+        }
+        cur = conn.cursor()
+
+        # Filter out None values for optional fields
+        columns, values = zip(*((k, v) for k, v in data.items() if v is not None))
+        placeholders = ', '.join(['%s'] * len(values))
+        sql = f"INSERT INTO Photos ({', '.join(columns)}) VALUES ({placeholders});"
+        try:
+            cur.execute(sql, values)
+            conn.commit()
+            flash(f'Photo successfully uploaded to album {album_name}', 'is-success')
+            return render_template('upload_photo.html', album_id = album_id, album_name = album_name)
+        except Exception as e:
+            conn.rollback()
+            print("Failed to insert record into database:", e, file=sys.stderr)
+            flash('Failed to upload photo. Please try again.', 'is-danger')
+        finally:
+            cur.close()
+
+        render_template('upload_photo.html', album_id = album_id, album_name = album_name)
+
+    return render_template('upload_photo.html', album_id = album_id, album_name = album_name)
 
