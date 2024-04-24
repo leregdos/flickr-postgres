@@ -19,7 +19,7 @@
             {% if session.get('userid') %}
             <div id="navbarMenuHeroA" class="navbar-menu">
               <div class="navbar-end">
-                <a href="{{ url_for('index.index') }}" class="navbar-item">
+                <a href="{{ url_for('photos.index') }}" class="navbar-item">
                   Photos
                 </a>
                 <a href="{{ url_for('index.index') }}" class="navbar-item">
@@ -31,7 +31,7 @@
                 <a href="{{ url_for('index.index') }}" class="navbar-item">
                   Recommendations
                 </a>
-                <a href="{{ url_for('index.index') }}" class="navbar-item">
+                <a href="{{ url_for('user.profile') }}" class="navbar-item">
                   Profile
                 </a>
                 <a href="{{ url_for('user.logout') }}" class="navbar-item">
@@ -42,7 +42,7 @@
             {% else %}
             <div id="navbarMenuHeroA" class="navbar-menu">
               <div class="navbar-end">
-                <a href="{{ url_for('index.index') }}" class="navbar-item">
+                <a href="{{ url_for('photos.index') }}" class="navbar-item">
                   Photos
                 </a>
                 <a href="{{ url_for('index.index') }}" class="navbar-item">

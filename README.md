@@ -13,7 +13,7 @@ This is a Flask + PostgreSQL implementation of a picture sharing social media pl
 
 To set up the dependencies, from the root folder, do the following (We assume that you have already installed virtualenv and activated your virtual environment):
 
-1. Run `pip install -r requirements.txt` to install all dependencies in the virtual environment.
+1. Run `pip install -r requirements.txt` (or `pip3 install -r requirements.txt` if using python3) to install all dependencies in the virtual environment.
 
 ### Database
 
@@ -27,6 +27,17 @@ To set up the local database, from the root folder, do the following:
 6. Create the tables: `\i define_schema.sql`
 7. Exit the interactive mode: `\q`
 
-## Acknolwedgements
+### Running the application 
+Run 'python3 app.py' in the root directory.
 
+## Acknolwedgements
 - The html templates were taken from this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login)
+
+## Notes from Chunting 
+1. Need to recreate the schema as I edit some parts.
+2. User can go to the photos tab in the navigation bar to browse albums and photos from all user. 
+3. Registered user can create new album from their profile page. Here the assumption is that each photo must be attached to an album, so they can only upload photo after the album is created.
+4. Registered user can click the album they created (from their profile page or by clicking the album name on the photos page), and they will find a link that bring them to the form to upload photo to this album. 
+5. Registered users can delete the photos and albums they created, but they cannot delete the ones created by other users.
+
+

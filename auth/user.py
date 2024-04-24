@@ -9,6 +9,42 @@ user_blueprint = Blueprint('user', __name__)
 def index():
     return "User index"
 
+# profile shows the users' info and the albums they have
+@user_blueprint.route('/profile')
+def profile():
+    user_id = session['userid']
+    from app import conn
+
+    cur = conn.cursor()
+    cur.execute('SELECT first_name, last_name, email, date_of_birth, hometown, gender FROM Users WHERE user_id = {0};'.format(user_id))
+    (first_name, last_name, email, date_of_birth, hometown, gender) = cur.fetchone()
+    cur.close()
+    user_info = {
+        'user_id': user_id,
+        'first_name': first_name,
+        'last_name': last_name, 
+        'email': email,
+        'date_of_birth': date_of_birth,
+        'hometown': hometown,
+        'gender': gender
+    }
+
+    cur = conn.cursor()
+    cur.execute('SELECT album_id, name FROM Albums WHERE owner = {0};'.format(user_id))
+    rows = cur.fetchall()
+    cur.close()
+
+    albums = []
+    for row in rows:
+        (album_id, name) = row
+        album = {
+            'album_id': album_id,
+            'name': name
+        }
+        albums.append(album)
+
+    return render_template('profile.html', user_info = user_info, albums = albums)
+
 @user_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -98,6 +134,3 @@ def logout():
     flash('You have been logged out.', 'is-success')
     return redirect(url_for('index.index'))
 
-@user_blueprint.route('/profile', methods=['GET'])
-def profile():
-    return session['id']
