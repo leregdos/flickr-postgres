@@ -51,10 +51,10 @@ def index():
     return render_template('photos.html', albums = album_list)
 
 # view a single album
-@photos_blueprint.route('/view-album/<int:album_id>', methods=['GET', 'POST'])
+@photos_blueprint.route('/view-album/<int:album_id>', methods=['GET', 'DELETE'])
 def view_album(album_id):
     # post request delete the album
-    if request.method == 'POST':
+    if request.method == 'DELETE':
         from app import conn
         cur = conn.cursor()
         sql = "DELETE FROM Albums WHERE album_id = '{0}';".format(album_id)
@@ -118,10 +118,10 @@ def view_album(album_id):
 
 
 # view a single photo  
-@photos_blueprint.route('/view-photo/<int:photo_id>', methods=['GET', 'POST'])
+@photos_blueprint.route('/view-photo/<int:photo_id>', methods=['GET', 'DELETE'])
 def view_photo(photo_id):
-    # post request delete the photo
-    if request.method == 'POST':
+    # DELETE request delete the photo
+    if request.method == 'DELETE':
         from app import conn
         cur = conn.cursor()
         sql = "DELETE FROM Photos WHERE photo_id = '{0}';".format(photo_id)
