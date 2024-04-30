@@ -264,6 +264,7 @@ def upload_photo(album_id):
             words = request.form['tags'].split(' ')
             for word in words:
                 # first check if the current tag already exist
+                word = word.lower()
                 cur = conn.cursor()
                 cur.execute("SELECT tag_id FROM Tags where words = '{0}';".format(word))
                 
