@@ -66,3 +66,35 @@ def popular_tags():
         tagsAlt.append([tag[0], tag[1]])
     cur.close()
     return render_template('popular_tags.html', tags=tagsAlt)
+
+@tags_blueprint.route('/search-by-tag', methods=['GET', 'POST'])
+def search_by_tag():
+    if request.method == 'POST':
+        tags = request.form['tags'].split()
+        if not tags or tags[0] == '' or tags[0] == ' ':
+            flash('Please enter at least one tag.', 'is-danger')
+            return render_template('search_form.html')
+        
+        from app import conn
+        cur = conn.cursor()
+        placeholders = ', '.join(['%s'] * len(tags))  # Create placeholders for query
+        query = f"""
+            SELECT P.photo_id, P.caption, P.data
+            FROM Photos P
+            JOIN Tagged T ON P.photo_id = T.photo_id
+            JOIN Tags Ta ON T.tag_id = Ta.tag_id
+            WHERE Ta.words IN ({placeholders})
+            GROUP BY P.photo_id, P.caption, P.data
+            HAVING COUNT(DISTINCT Ta.words) = %s;
+        """
+        cur = conn.cursor()
+        cur.execute(query, tags + [len(tags)])  # Execute query with tags and count
+        photos = []
+        for row in cur.fetchall():
+            photo_id, caption, data = row
+            # Ensure data is a bytes object and encode it in base64
+            photos.append([photo_id, base64.b64encode(data).decode(), caption ])
+        cur.close()
+        return render_template('tag_search_results.html', photos=photos, tags=' & '.join(tags))
+    
+    return render_template('tag_search.html')
