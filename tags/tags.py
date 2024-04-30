@@ -74,7 +74,7 @@ def search_by_tag():
         if not tags or tags[0] == '' or tags[0] == ' ':
             flash('Please enter at least one tag.', 'is-danger')
             return render_template('tag_search.html')
-        
+        tags = [tag.lower() for tag in tags]
         from app import conn
         cur = conn.cursor()
         placeholders = ', '.join(['%s'] * len(tags))  # Create placeholders for query
