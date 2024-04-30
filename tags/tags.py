@@ -73,7 +73,7 @@ def search_by_tag():
         tags = request.form['tags'].split()
         if not tags or tags[0] == '' or tags[0] == ' ':
             flash('Please enter at least one tag.', 'is-danger')
-            return render_template('search_form.html')
+            return render_template('tag_search.html')
         
         from app import conn
         cur = conn.cursor()
