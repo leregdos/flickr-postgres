@@ -151,11 +151,22 @@ def view_photo(photo_id):
     cur.execute("SELECT owner FROM Albums WHERE album_id = '{0}';".format(album_id))
     (owner,) = cur.fetchone()
     cur.close()
+    # Fetch the tags associated with the photo
+    cur = conn.cursor()
+    cur.execute("SELECT Ta.words FROM Tagged T JOIN Tags Ta ON T.tag_id = Ta.tag_id WHERE T.photo_id = {0};".format(photo_id,))
+    tags = cur.fetchall()
+    tagsAlt = []
+    for tag in tags:
+        if not tag[0]:
+            continue
+        tagsAlt.append(tag[0])
+    cur.close()
     photo = {
         'owner': owner,
         'photo_id': photo_id, 
         'photo': base64.b64encode(data).decode(), 
-        'caption': caption
+        'caption': caption,
+        'tags': tagsAlt
     }
     
     # only the owner of the photo has privilege to delete it

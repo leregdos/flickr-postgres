@@ -1,24 +1,37 @@
-{% extends "base.html" %} 
-{% block content %}
-    <div class = 'box'>
-        <div>
-        <div class="card-image">
-            <figure class="image">
-                <img src="data:image/jpg;base64,{{photo.photo}}" alt="Photo">
-            </figure>
-        </div>
-        <div class="card-content">
-            <ul>
-                Caption: {{photo.caption}}
-            </ul>
-            {% if user_id==photo.owner %}
-            <form method="POST" action="{{ url_for('photos.view_photo', photo_id = photo.photo_id) }}">
-                <div class="control">
-                    <button class="button is-danger">Delete this photo</button>
-                </div>
-            </form>
-            {% endif %}
-        </div>
-        <div>
+{% extends "base.html" %} {% block content %}
+<div class="box">
+  <div>
+    <div class="card-image">
+      <figure class="image">
+        <img src="data:image/jpg;base64,{{photo.photo}}" alt="Photo" />
+      </figure>
     </div>
-{% endblock %}
+    <div class="card-content">
+      <ul>
+        Caption: {{photo.caption}}
+      </ul>
+      {% if photo.tags|length > 0 %}
+      <p>Tags:</p>
+      {%endif%}
+      <div>
+        {% for tag in photo.tags %}
+        <a href="{{ url_for('index.index')}}" class="button is-link tag-button">
+          {{ tag }}
+        </a>
+        {% endfor %}
+      </div>
+      {% if user_id==photo.owner %}
+      <form
+        method="POST"
+        action="{{ url_for('photos.view_photo', photo_id = photo.photo_id) }}"
+      >
+        <div class="control">
+          <button class="button is-danger">Delete this photo</button>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+    <div></div>
+    {% endblock %}
+  </div>
+</div>
