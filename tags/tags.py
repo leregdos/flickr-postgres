@@ -6,8 +6,8 @@ from flask import Blueprint, flash, request, render_template, redirect, session,
 tags_blueprint = Blueprint('tags', __name__)
 
 @tags_blueprint.route('/')
-def root():
-    return redirect(url_for('photos.index'))
+def tags_home():
+    return render_template('tags.html')
 
 @tags_blueprint.route('/<string:tag_name>')
 def view_tag(tag_name):
@@ -46,3 +46,23 @@ def view_tag(tag_name):
     cur.close()
 
     return render_template('view_tag.html', photos=photos, tag_name=tag_name)
+
+@tags_blueprint.route('/popular-tags')
+def popular_tags():
+    from app import conn
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT Tags.words, COUNT(Tagged.photo_id) as photo_count 
+        FROM Tags
+        JOIN Tagged ON Tags.tag_id = Tagged.tag_id
+        GROUP BY Tags.words
+        ORDER BY photo_count DESC;
+    """)
+    tags = cur.fetchall()
+    tagsAlt = []
+    for tag in tags:
+        if not tag[0]:
+            continue
+        tagsAlt.append([tag[0], tag[1]])
+    cur.close()
+    return render_template('popular_tags.html', tags=tagsAlt)
