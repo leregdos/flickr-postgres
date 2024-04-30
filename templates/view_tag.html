@@ -1,0 +1,52 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1 class="title">Photos tagged with "{{ tag_name }}"</h1>
+  <h3 class="subtitle">
+    Display all photos with tag (Default) or Display own photos with tag
+  </h3>
+  <label class="switch">
+    <input type="checkbox" id="toggleDisplay" {% if request.args.get('own') ==
+    'true' %}checked{% endif %}>
+    <span class="slider round"></span>
+  </label>
+  {% if not session.get('userid') and request.args.get('own') == 'true'%}
+  <h3 class="subtitle">
+    You have to be logged in to see your own photos under this tag.
+  </h3>
+  {% endif %}
+  <div class="columns is-multiline">
+    {% if photos %} {% for photo in photos %}
+    <div class="column is-one-quarter">
+      <div class="card">
+        <div
+          class="card-image"
+          onclick="window.location.href='/photos/view-photo/{{ photo[0] }}'"
+        >
+          <figure class="image is-4by3">
+            <img
+              src="data:image/jpg;base64,{{photo[1]}}"
+              alt="{{ photo[2] }}"
+              style="cursor: pointer"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <p class="subtitle has-text-black">{{ photo[2] }}</p>
+          <!-- Caption -->
+        </div>
+      </div>
+    </div>
+    {% endfor %} {% endif %}
+  </div>
+</div>
+
+<script>
+  document
+    .getElementById("toggleDisplay")
+    .addEventListener("change", function () {
+      const url = new URL(window.location.href);
+      url.searchParams.set("own", this.checked ? "true" : "false");
+      window.location.href = url.toString();
+    });
+</script>
+{% endblock %}

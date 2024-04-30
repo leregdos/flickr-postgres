@@ -4,7 +4,7 @@ import sys
 from index import index
 import base64
 
-# Create a Blueprint for the user-related operations
+# Create a Blueprint for the photo-related operations
 photos_blueprint = Blueprint('photos', __name__)
 
 # url '/photos'

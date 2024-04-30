@@ -15,7 +15,10 @@
       {%endif%}
       <div>
         {% for tag in photo.tags %}
-        <a href="{{ url_for('index.index')}}" class="button is-link tag-button">
+        <a
+          href="{{ url_for('tags.view_tag', tag_name = tag)}}"
+          class="button is-link tag-button"
+        >
           {{ tag }}
         </a>
         {% endfor %}
