@@ -2,6 +2,7 @@ from flask import Flask
 from index import index
 from auth import user
 from photos import photos
+from tags import tags
 from flask_session import Session
 import psycopg2
 
@@ -22,6 +23,8 @@ conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_
 app.register_blueprint(index.index_blueprint, url_prefix='/')
 app.register_blueprint(user.user_blueprint, url_prefix='/user')
 app.register_blueprint(photos.photos_blueprint, url_prefix='/photos')
+app.register_blueprint(tags.tags_blueprint, url_prefix='/tags')
+
 
 
 if __name__ == '__main__':

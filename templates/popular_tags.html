@@ -1,0 +1,15 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1 class="title">Most Popular Tags</h1>
+  <div>
+    {% for tag, count in tags %}
+    <a
+      href="{{ url_for('tags.view_tag', tag_name=tag) }}"
+      class="button is-link"
+      >{{ tag }} ({{ count }})</a
+    ><br />
+    <p>&nbsp</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
