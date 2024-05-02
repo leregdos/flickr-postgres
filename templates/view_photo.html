@@ -8,30 +8,75 @@
     </div>
     <div class="card-content">
       <ul>
-        Caption: {{photo.caption}}
+        <b>Caption:</b> {{photo.caption}}
       </ul>
       {% if photo.tags|length > 0 %}
-      <p>Tags:</p>
+      <b>Tags:</b>
       {%endif%}
-      <div>
+      <div class = 'block'>
         {% for tag in photo.tags %}
         <a
           href="{{ url_for('tags.view_tag', tag_name = tag)}}"
           class="button is-link tag-button"
         >
-          {{ tag }}
+          # {{tag}}
         </a>
         {% endfor %}
       </div>
-      {% if user_id==photo.owner %}
-      <form
-        method="POST"
-        action="{{ url_for('photos.view_photo', photo_id = photo.photo_id) }}"
-      >
-        <div class="control">
-          <button class="button is-danger">Delete this photo</button>
+      
+      {% if user_id > 0%}
+      <div class = 'block'>
+        <form method="POST" action="{{ url_for('comments.like_photo', photo_id = photo.photo_id) }}">
+          <button class="button is-danger is-rounded" type="submit">Like</button>
+        </form>
+      </div>
+      {%endif%}
+
+      <div class = 'box'>
+        <p>
+          <div><b>Liked by {{photo.like_cnt}} users: </b></div>
+          {{photo.like_users}}
+        </p>
+      </div>
+
+      {% if user_id != photo.owner %}
+        <div class = 'box'>
+          <form method="POST" action="{{ url_for('comments.post_comment', photo_id = photo.photo_id) }}" enctype="multipart/form-data">
+            <div class="field">
+              <p class="control">
+                <input class="input" type="text" name="comment" placeholder="add a comment" required>
+              </p>
+            </div>
+      
+            <div class="field">
+              <p class="control">
+                <button class="button is-success" type="submit">Post</button>
+              </p>
+            </div>
+          </form>
         </div>
-      </form>
+
+      {% endif %}
+
+
+      <div class = 'box'>
+        <p>
+          <div><b>Comments</b></div>
+          {% for comment in photo.comments %}
+            {{comment}} <br>
+          {% endfor %}
+        </p>
+      </div>
+
+      {% if user_id==photo.owner %}
+        <form
+          method="POST"
+          action="{{ url_for('photos.view_photo', photo_id = photo.photo_id) }}"
+        >
+          <div class="control">
+            <button class="button is-danger">Delete this photo</button>
+          </div>
+        </form>
       {% endif %}
     </div>
     <div></div>

@@ -151,6 +151,7 @@ def view_photo(photo_id):
     cur.execute("SELECT owner FROM Albums WHERE album_id = '{0}';".format(album_id))
     (owner,) = cur.fetchone()
     cur.close()
+
     # Fetch the tags associated with the photo
     cur = conn.cursor()
     cur.execute("SELECT Ta.words FROM Tagged T JOIN Tags Ta ON T.tag_id = Ta.tag_id WHERE T.photo_id = {0};".format(photo_id,))
@@ -161,12 +162,51 @@ def view_photo(photo_id):
             continue
         tagsAlt.append(tag[0])
     cur.close()
+
+    # Fetch all the comments associated with this photo
+    cur = conn.cursor()
+    cur.execute("SELECT U.first_name, C.date, C.comment_str FROM Comments C LEFT JOIN Users U ON C.owner = U.user_id WHERE C.photo_id = {0};".format(photo_id,))
+    comments = cur.fetchall()
+    comments_list = []
+    for comment in comments:
+        (first_name, date, comment_str) = comment
+        display_str = ""
+        
+        if first_name:
+            display_str += "{0} on {1}: ".format(first_name, date)
+        else:
+            display_str += "Guest User on {0}: ".format(date)
+        display_str += "\"{0}\"".format(comment_str)
+        comments_list.append(display_str)
+    cur.close()
+
+    # Fetch all user who has liked this photo
+    cur = conn.cursor()
+    cur.execute("SELECT U.first_name FROM Likes L JOIN Users U ON L.user_id = U.user_id  WHERE L.photo_id = {0};".format(photo_id))
+    first_names = cur.fetchall()
+    like_users = []
+    for first_name in first_names:
+        (first_name, ) = first_name
+        like_users.append(first_name) 
+    cur.close()
+    like_users = ', '.join(like_users)
+
+    # Count the user who has like this photo
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM Likes WHERE photo_id = {0};".format(photo_id))
+    (like_cnt, ) = cur.fetchone() 
+    cur.close()
+
+
     photo = {
         'owner': owner,
         'photo_id': photo_id, 
         'photo': base64.b64encode(data).decode(), 
         'caption': caption,
-        'tags': tagsAlt
+        'tags': tagsAlt,
+        'comments': comments_list,
+        'like_users': like_users,
+        'like_cnt': like_cnt
     }
     
     # only the owner of the photo has privilege to delete it
@@ -198,6 +238,7 @@ def create_album():
 
         # Check if album of the same name of this user already exists
         cur.execute("SELECT * FROM Albums A WHERE A.name = '{0}';".format(data['name']))
+
         if cur.fetchone():
             flash('You already have an album of the same name. Please use another album name.', 'is-danger')
             return render_template('create_album.html')

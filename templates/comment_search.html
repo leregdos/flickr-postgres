@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1 class="title">Search Comments</h1>
+  <form method="POST">
+    <div class = 'field'>
+    <input
+      type="text"
+      name="comment_query"
+      placeholder="Enter comment to search"
+      class="input"
+    />
+    </div>
+
+    <div class = 'block'>
+      <button type="submit" class = "button is-primary is-link">Search</button>
+    </div>
+  </form>
+</div>
+
+{% if results_dict.results%}
+<div class="container">
+  <h1 class="title">Search results for "{{results_dict.query}}" (ordered by # of comments)</h1>
+  {% for result in results_dict.results %}
+  <div class = 'block'>
+    <p>{{result.user_name}} has {{result.cnt}} matched comments on photos:
+      {% for photo_id in result.photos %}
+      <a
+        href="{{ url_for('photos.view_photo', photo_id = photo_id)}}"
+      >
+        #{{photo_id}}
+      </a>
+      {% endfor %}
+    </p>
+  </div>
+  {% endfor %}
+{% else %}
+  <p>No matched comment found</p>
+{% endif %}
+</div>
+{% endblock %}
