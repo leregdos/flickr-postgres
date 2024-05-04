@@ -1,6 +1,5 @@
 import base64
-from flask import Blueprint, flash, request, render_template, redirect, session, url_for
-# from index import index
+from flask import Blueprint, flash, request, render_template, session
 
 # Create a Blueprint for the tag-related operations
 tags_blueprint = Blueprint('tags', __name__)

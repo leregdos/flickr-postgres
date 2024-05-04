@@ -1,0 +1,47 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1 class="title is-3">Add New Friends</h1>
+  <h2 class="subtitle">Search For Users</h1>
+  {% if query %}
+  <form method="POST">
+    <input
+      type="text"
+      name="search_query"
+      placeholder="{{ query }}"
+      class="input"
+    />
+    <p>&nbsp</p>
+    <button type="submit" class="button is-small is-link">Search</button>
+    <p>&nbsp</p>
+  </form>
+  {% else %}
+  <form method="POST">
+    <input
+      type="text"
+      name="search_query"
+      placeholder="Enter name or email"
+      class="input"
+    />
+    <p>&nbsp</p>
+    <button type="submit" class="button is-small is-link">Search</button>
+    <p>&nbsp</p>
+  </form>
+  {% endif %}
+  <h2 class="subtitle">Users</h2>
+  {% if users %}
+  <ul>
+    {% for user in users %}
+    <li class="user-list-item">
+        <span>{{ user[1] }} {{ user[2] }} - {{ user[3] }}</span>
+        <form method="POST" class="user-list-form">
+          <input type="hidden" name="add_friend" value="{{ user[0] }}" />
+          <button type="submit" class="button is-small is-link">Add Friend</button>
+        </form>
+    </li>      
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No users found.</p>
+  {% endif %}
+</div>
+{% endblock %}

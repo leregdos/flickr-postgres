@@ -4,6 +4,7 @@ from auth import user
 from photos import photos
 from tags import tags
 from comments import comments
+from friends import friends
 from flask_session import Session
 import psycopg2
 
@@ -26,6 +27,8 @@ app.register_blueprint(user.user_blueprint, url_prefix='/user')
 app.register_blueprint(photos.photos_blueprint, url_prefix='/photos')
 app.register_blueprint(tags.tags_blueprint, url_prefix='/tags')
 app.register_blueprint(comments.comments_blueprint, url_prefix='/comments')
+app.register_blueprint(friends.friends_blueprint, url_prefix='/friends')
+
 
 
 

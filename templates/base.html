@@ -10,6 +10,17 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
     />
     <style>
+      .user-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .user-list-form {
+        flex-shrink: 0;
+      }
+
       .switch {
         margin-bottom: 20px;
         position: relative;
@@ -76,10 +87,16 @@
                 <a href="{{ url_for('tags.tags_home') }}" class="navbar-item">
                   Tags
                 </a>
-                <a href="{{url_for('comments.comment_search')}}" class="navbar-item">
+                <a
+                  href="{{url_for('comments.comment_search')}}"
+                  class="navbar-item"
+                >
                   Comments
                 </a>
-                <a href="{{ url_for('index.index') }}" class="navbar-item">
+                <a
+                  href="{{ url_for('friends.friends_home') }}"
+                  class="navbar-item"
+                >
                   Friends
                 </a>
                 <a href="{{ url_for('index.index') }}" class="navbar-item">
