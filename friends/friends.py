@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, request, render_template, redirect, session, url_for
-from auth import user
-# Create a Blueprint for the tag-related operations
+from utils import functions
+# Create a Blueprint for the friend-related operations
 friends_blueprint = Blueprint('friends', __name__)
 
 @friends_blueprint.route('/')
@@ -45,7 +45,7 @@ def friends_add():
     users, query = [], ''
     # If the request is add friend
     if request.method == 'POST' and 'add_friend' in request.form:
-        return add(request.form['add_friend'])
+        return functions.add_friend(request.form['add_friend'], 0)
     # If the request is a search request
     elif request.method == 'POST':
         search_query = request.form.get('search_query', '')
@@ -91,30 +91,3 @@ def friends_add():
             users.append(item)
     cur.close()
     return render_template('add_friend.html', users=users, query=query)
-
-def add(friend_id):
-    user_id = session.get('userid')
-    from app import conn
-    cur = conn.cursor()
-    # Check if the friendship already exists
-    sql = """
-        SELECT 1 FROM Friends F
-        WHERE (F.user1_id = {0} AND F.user2_id = {1}) 
-        OR (user1_id = {1} AND user2_id = {0});
-    """.format(user_id, friend_id)
-    cur.execute(sql)
-    if cur.fetchone():
-        flash("This user is already your friend.", "is-danger")
-        cur.close()
-        return redirect(url_for('friends.friends_add'))
-
-    # Insert new friendship
-    sql = """
-        INSERT INTO Friends (user1_id, user2_id) VALUES ({0}, {1});
-    """.format(user_id, friend_id)
-    cur.execute(sql)
-    conn.commit()
-    cur.close()
-    flash("Friend added successfully!", "is-success")
-
-    return redirect(url_for('friends.friends_add'))

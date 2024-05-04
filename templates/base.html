@@ -99,7 +99,10 @@
                 >
                   Friends
                 </a>
-                <a href="{{ url_for('index.index') }}" class="navbar-item">
+                <a
+                  href="{{ url_for('recommendations.recommendations_home') }}"
+                  class="navbar-item"
+                >
                   Recommendations
                 </a>
                 <a href="{{ url_for('user.profile') }}" class="navbar-item">
