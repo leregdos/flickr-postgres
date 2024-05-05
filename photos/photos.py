@@ -304,6 +304,9 @@ def upload_photo(album_id):
             # adding tags
             words = request.form['tags'].split(' ')
             for word in words:
+                if (not word) or word == "":
+                    continue
+
                 # first check if the current tag already exist
                 word = word.lower()
                 cur = conn.cursor()

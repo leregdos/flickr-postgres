@@ -45,6 +45,7 @@ Run 'python3 app.py' in the root directory.
 1. Since it's not specified in the project description, we assume that only registered user can like a photo. 
 2. On the other hand, as specified in the project description, both registered and unregisterd users can comment on a post. Unregistered users' comments will shown as by "Guest User".
 3. As stated in the project description, the search comments function can only find comments that exactly match the input query. 
+4. Not specified in the project description, so we assume that teh comment search only return results of registered users. 
 
 
 
