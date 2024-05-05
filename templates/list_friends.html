@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1 class="title is-3">List Your Friends</h1>
+  {% if users %}
+  <ol>
+    {% for user in users %}
+    <li class="user-list-item">
+      <span>{{ user[0] }} {{ user[1] }} - {{ user[2] }}</span>
+    </li>
+    <p>&nbsp</p>
+    {% endfor %}
+  </ol>
+  {% else %}
+  <p>No friends found.</p>
+  {% endif %}
+</div>
+{% endblock %}

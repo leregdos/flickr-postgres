@@ -1,0 +1,13 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1 class="title">Friend Options</h1>
+  <div class="buttons">
+    <a href="{{ url_for('friends.friends_add') }}" class="button is-link"
+      >Add New Friends</a
+    >
+    <a href="{{ url_for('friends.friends_list') }}" class="button is-link"
+      >List Your Friends</a
+    >
+  </div>
+</div>
+{% endblock %}

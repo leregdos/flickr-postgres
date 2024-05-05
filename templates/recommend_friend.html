@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1 class="title is-3">Friend Recommendations</h1>
+  {% if users %}
+  <ul>
+    {% for user, count in users.items() %}
+    <li class="user-list-item">
+      <span
+        >{{ user[1] }} {{ user[2] }} - {{ user[3] }} ( {{ count }} Mutual
+        Friends)</span
+      >
+      <form method="POST" class="user-list-form">
+        <input type="hidden" name="add_friend" value="{{ user[0] }}" />
+        <button type="submit" class="button is-small is-link">
+          Add Friend
+        </button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No users to recommend.</p>
+  {% endif %}
+</div>
+{% endblock %}
