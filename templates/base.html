@@ -100,6 +100,12 @@
                   Friends
                 </a>
                 <a
+                  href="{{ url_for('contributors.contributors_home') }}"
+                  class="navbar-item"
+                >
+                  Top 10 Contributors
+                </a>
+                <a
                   href="{{ url_for('recommendations.recommendations_home') }}"
                   class="navbar-item"
                 >
@@ -121,6 +127,12 @@
                 </a>
                 <a href="{{ url_for('tags.tags_home') }}" class="navbar-item">
                   Tags
+                </a>
+                <a
+                  href="{{ url_for('contributors.contributors_home') }}"
+                  class="navbar-item"
+                >
+                  Top 10 Contributors
                 </a>
                 <a href="{{ url_for('user.login') }}" class="navbar-item">
                   Login

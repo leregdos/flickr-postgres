@@ -45,6 +45,7 @@ def profile():
 
     return render_template('profile.html', user_info = user_info, albums = albums)
 
+
 @user_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
