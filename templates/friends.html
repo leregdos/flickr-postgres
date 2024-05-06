@@ -1,26 +1,13 @@
 {% extends "base.html" %} {% block content %}
-<div class="content">
-  <h1 class = 'title'>Top Contributors</h1>
-  <table>
-      {% for user in top_users%}
-      <tr>
-        <td> {{user.rank}} </td>
-        <td> {{user.name}} </td>
-      </tr>
-      {% endfor %}
-  </table>
-</div>
 <div class="container">
-  <div class = 'block'>
-    <h1 class="title">Friend Options</h1>
-    <div class="buttons">
-      <a href="{{ url_for('friends.friends_add') }}" class="button is-link"
-        >Add New Friends</a
-      >
-      <a href="{{ url_for('friends.friends_list') }}" class="button is-link"
-        >List Your Friends</a
-      >
-    </div>
+  <h1 class="title">Friend Options</h1>
+  <div class="buttons">
+    <a href="{{ url_for('friends.friends_add') }}" class="button is-link"
+      >Add New Friends</a
+    >
+    <a href="{{ url_for('friends.friends_list') }}" class="button is-link"
+      >List Your Friends</a
+    >
   </div>
 </div>
 {% endblock %}
